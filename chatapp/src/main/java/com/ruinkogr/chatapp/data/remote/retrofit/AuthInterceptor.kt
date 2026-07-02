@@ -14,6 +14,9 @@ class AuthInterceptor @Inject constructor(
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val originalRequest = chain.request()
+        if (originalRequest.url.encodedPath.contains("/api/auth/refresh")) {
+            return chain.proceed(originalRequest)
+        }
 
         val storage = tokenStorage as? EncryptedPrefsTokenStorage
         val accessToken = storage?.getAccessTokenSync()

@@ -14,33 +14,64 @@ import javax.inject.Singleton
 @Singleton
 class TokenAuthenticator @Inject constructor(
     private val tokenStorage: TokenStorage,
-    private val authService: AuthService,
+    private val authServiceLazy: dagger.Lazy<AuthService>,
     private val sessionManager: SessionManager
 ) : Authenticator {
 
     override fun authenticate(route: Route?, response: Response): Request? {
         if (response.request.url.encodedPath.contains("/api/auth/refresh")) {
+            sessionManager.emitLogoutEvent()
             return null
         }
 
-        val storage = tokenStorage as? EncryptedPrefsTokenStorage
-        val refreshToken = storage?.getRefreshTokenSync() ?: return null
+        synchronized(this) {
+            val storage = tokenStorage as? EncryptedPrefsTokenStorage
 
-        val refreshResponse = authService.refreshTokensSync(RefreshTokenRequest(refreshToken)).execute()
+            val currentAccessToken = storage?.getAccessTokenSync() ?: return null
+            val requestToken = response.request.header("Authorization")
 
-        return if (refreshResponse.isSuccessful && refreshResponse.body() != null) {
-            val newAccessToken = refreshResponse.body()!!.accessToken
-            storage.saveAccessTokenSync(newAccessToken)
+            // refresh if it has been refreshed in another thread
+            if (requestToken != "Bearer $currentAccessToken") {
+                return response.request.newBuilder()
+                    .header("Authorization", "Bearer $currentAccessToken")
+                    .build()
+            }
 
-            response.request.newBuilder()
-                .header("Authorization", "Bearer $newAccessToken")
-                .build()
-        } else {
-            storage.clearTokensSync()
+            // get Refresh Token
+            val refreshToken = storage.getRefreshTokenSync()
+            if (refreshToken.isNullOrBlank()) {
+                sessionManager.emitLogoutEvent()
+                return null
+            } else {
+                try {
+                    // Take AuthService via Lazy now
+                    val authService = authServiceLazy.get()
 
-            sessionManager.emitLogoutEvent()
+                    // refresh token api call
+                    val refreshResponse = authService
+                        .refreshTokensSync(RefreshTokenRequest(refreshToken))
+                        .execute()
 
-            null
+                    if (refreshResponse.isSuccessful && refreshResponse.body() != null) {
+                        val newTokens = refreshResponse.body()!!
+
+                        // Save new access token
+                        storage.saveAccessTokenSync(newTokens.accessToken)
+
+                        // repeat request with new access token
+                        return response.request.newBuilder()
+                            .header("Authorization", "Bearer ${newTokens.accessToken}")
+                            .build()
+                    } else {
+                        // error on refresh tocked
+                        sessionManager.emitLogoutEvent()
+                        return null
+                    }
+                } catch (e: Exception) {
+                    // Network error
+                    return null
+                }
+            }
         }
     }
 }
