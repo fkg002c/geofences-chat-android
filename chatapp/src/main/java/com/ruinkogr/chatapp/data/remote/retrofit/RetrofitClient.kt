@@ -1,6 +1,5 @@
 package com.ruinkogr.chatapp.data.remote.retrofit
 
-import okhttp3.Authenticator
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -23,11 +22,9 @@ object RetrofitClient {
 
     fun createMainOkHttpClient(
         authInterceptor: Interceptor,
-        tokenAuthenticator: Authenticator
     ): OkHttpClient {
         return OkHttpClient.Builder()
             .addInterceptor(authInterceptor)
-            .authenticator(tokenAuthenticator)
             .addInterceptor(loggingInterceptor)
             .build()
     }

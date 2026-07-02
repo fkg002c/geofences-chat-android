@@ -6,7 +6,6 @@ import com.ruinkogr.chatapp.data.remote.MessagesService
 import com.ruinkogr.chatapp.data.remote.UsersService
 import com.ruinkogr.chatapp.data.remote.retrofit.AuthInterceptor
 import com.ruinkogr.chatapp.data.remote.retrofit.RetrofitClient
-import com.ruinkogr.chatapp.data.remote.retrofit.TokenAuthenticator
 import com.ruinkogr.chatapp.data.storage.EncryptedPrefsTokenStorage
 import com.ruinkogr.chatapp.data.storage.TokenStorage
 import dagger.Module
@@ -14,7 +13,6 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import okhttp3.Authenticator
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -38,10 +36,6 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideTokenAuthenticator(authenticator: TokenAuthenticator): Authenticator = authenticator
-
-    @Provides
-    @Singleton
     @Named("AuthOkHttp")
     fun provideAuthOkHttpClient(): OkHttpClient {
         return RetrofitClient.createAuthOkHttpClient()
@@ -59,9 +53,8 @@ object NetworkModule {
     @Named("MainOkHttp")
     fun provideMainOkHttpClient(
         authInterceptor: Interceptor,
-        tokenAuthenticator: Authenticator
     ): OkHttpClient {
-        return RetrofitClient.createMainOkHttpClient(authInterceptor, tokenAuthenticator)
+        return RetrofitClient.createMainOkHttpClient(authInterceptor)
     }
 
     @Provides
