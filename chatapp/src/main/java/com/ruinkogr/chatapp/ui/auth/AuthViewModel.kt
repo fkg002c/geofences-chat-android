@@ -30,7 +30,7 @@ class AuthViewModel @Inject constructor(
                 if (response.isSuccessful && response.body() != null) {
                     val tokens = response.body()!!
                     // Save tokens
-                    tokenStorage.saveTokens(tokens.accessToken, tokens.refreshToken)
+                    tokenStorage.saveSession(tokens.id, tokens.accessToken, tokens.refreshToken)
                     _loginState.value = Resource.Success(Unit)
                 } else {
                     _loginState.value = Resource.Error("Wrong User name or password")

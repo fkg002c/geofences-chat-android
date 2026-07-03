@@ -56,7 +56,7 @@ class MainActivity : ComponentActivity() {
                     sessionManager.authEvents.collect { event ->
                         when (event) {
                             is AuthEvent.Logout -> {
-                                tokenStorage.clearTokens()
+                                tokenStorage.clearSession()
 
                                 navController.navigate("login_screen") {
                                     popUpTo(0) { inclusive = true }
@@ -131,7 +131,7 @@ class MainActivity : ComponentActivity() {
                             val chatWithUserId = backStackEntry.arguments?.getInt("chatWithUserId") ?: 0
                             FullChatScreen(
                                 viewModel = chatViewModel,
-                                currentUserId = 1 , // TODO login must inform about ID
+                                currentUserId = 1, // TODO login must inform about ID
                                 chatWithUserId = chatWithUserId
                             )
                         }
