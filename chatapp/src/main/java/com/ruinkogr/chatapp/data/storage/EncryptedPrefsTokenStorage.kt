@@ -29,14 +29,7 @@ class EncryptedPrefsTokenStorage(context: Context) : TokenStorage {
 
     override suspend fun clearSession() = withContext(Dispatchers.IO) { clearSessionSync() }
 
-    override suspend fun isUserLoggedInSync(): Boolean {
-        val token = sharedPreferences.getString(KEY_ACCESS_TOKEN, null)
-        return !token.isNullOrEmpty()
-    }
-
-    override suspend fun getCurrentUserId(): Int = withContext(Dispatchers.IO) {
-        sharedPreferences.getInt(KEY_USER_ID, -1)
-    }
+    override suspend fun getCurrentUserId(): Int = withContext(Dispatchers.IO) { getCurrentUserIdSync() }
 
     // Extra sync methods for OkHttp Authenticator
     fun getAccessTokenSync(): String? = sharedPreferences.getString(KEY_ACCESS_TOKEN, null)
@@ -45,6 +38,7 @@ class EncryptedPrefsTokenStorage(context: Context) : TokenStorage {
 
     fun clearSessionSync() = sharedPreferences.edit(commit = true) { remove(KEY_ACCESS_TOKEN); remove(KEY_REFRESH_TOKEN); remove(KEY_USER_ID) }
 
+    fun getCurrentUserIdSync(): Int = sharedPreferences.getInt(KEY_USER_ID, -1)
     fun saveSessionSync(id: Int, accessToken: String, refreshToken: String) {
         sharedPreferences.edit {
             putInt(KEY_USER_ID, id)

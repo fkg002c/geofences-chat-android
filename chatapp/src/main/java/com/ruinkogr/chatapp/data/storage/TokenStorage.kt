@@ -6,6 +6,5 @@ interface TokenStorage {
     suspend fun saveAccessToken(token: String)
     suspend fun saveSession(userId: Int, accessToken: String, refreshToken: String)
     suspend fun clearSession()
-    suspend fun isUserLoggedInSync(): Boolean
     suspend fun getCurrentUserId(): Int?
 }

@@ -36,9 +36,11 @@ fun UsersScreen(
     Scaffold(
         topBar = { TopAppBar(title = { Text("Contacts") }) }
     ) { innerPadding ->
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .padding(innerPadding)) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+        ) {
             when (val state = usersState) {
                 is UsersUiState.Loading -> CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                 is UsersUiState.Success -> {

@@ -52,13 +52,38 @@ class ChatRepository @Inject constructor(
         emit(Resource.Error("Cache or Network error", e))
     }.flowOn(Dispatchers.IO)
 
-    suspend fun sendMessage(content: String, receiverId: Int): Resource<List<MessageDto>> {
-        val request = SendMessageRequest(content, receiverId)
-        val result = safeApiCall { messagesService.sendMessage(request) }
-        if (result is Resource.Success) {
-            messageDao.insertMessages(result.data.map { it.toEntity() })
+    fun getMessagesWithCacheAlt(currentUserId: Int, chatWithUserId: Int): Flow<Resource<List<MessageDto>>> = flow {
+        // Progress Bar
+        emit(Resource.Loading)
+
+        // 2. Refresh messages request. Try-catch is for do not interrupt DB request below.
+        try {
+            val networkResult = safeApiCall { messagesService.getMessages(chatWithUserId) }
+            if (networkResult is Resource.Success) {
+                val entities = networkResult.data.map { it.toEntity() }
+                messageDao.insertMessages(entities)
+                // Room will push new data into flow
+            }
+        } catch (e: Exception) {
+            // Network or get messages error
         }
-        return result
+
+        // 3. return live flow. it will emit all new inserted data too
+        messageDao.getChatHistoryFlow(currentUserId, chatWithUserId)
+            .map { list -> Resource.Success(list.map { it.toDto() }) }
+            .collect { emit(it) }
+
+    }.catch { e ->
+        emit(Resource.Error("Get messages critical error", e))
+    }.flowOn(Dispatchers.IO)
+
+    suspend fun sendMessage(content: String, receiverId: Int): Resource<MessageDto> {
+        val request = SendMessageRequest(content, receiverId)
+        val response = safeApiCall { messagesService.sendMessage(request) }
+        if (response is Resource.Success) {
+            messageDao.insertMessages(listOf(response.data.toEntity()))
+        }
+        return response
     }
 
 

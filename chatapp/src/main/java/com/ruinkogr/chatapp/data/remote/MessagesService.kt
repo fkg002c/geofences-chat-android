@@ -14,7 +14,7 @@ import retrofit2.http.Query
 interface MessagesService {
 
     @POST("api/messages")
-    suspend fun sendMessage(@Body request: SendMessageRequest): Response<List<MessageDto>>
+    suspend fun sendMessage(@Body request: SendMessageRequest): Response<MessageDto>
 
     @GET("api/messages")
     suspend fun getMessages(

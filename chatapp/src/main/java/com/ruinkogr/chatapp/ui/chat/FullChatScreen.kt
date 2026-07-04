@@ -11,32 +11,26 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ruinkogr.chatapp.data.Resource
 
 @Composable
 fun FullChatScreen(
     viewModel: ChatViewModel,
-    currentUserId: Int,
-    chatWithUserId: Int
 ) {
-    // LaunchedEffect run one time until key1 changed
-    LaunchedEffect(key1 = chatWithUserId) {
-        viewModel.loadChatHistory(currentUserId = currentUserId, chatWithUserId = chatWithUserId)
-    }
+    val chatState by viewModel.messagesState.collectAsStateWithLifecycle()
 
     Scaffold(
         bottomBar = {
             MessageInputBar(
                 modifier = Modifier.navigationBarsPadding(),
                 onSendMessage = { text ->
-                    viewModel.sendMessage(text, chatWithUserId)
+                    viewModel.sendMessage(text)
                 }
             )
         }
@@ -46,9 +40,7 @@ fun FullChatScreen(
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            val messagesState by viewModel.messagesState.collectAsState()
-
-            when (val state = messagesState) {
+            when (val state = chatState) {
                 is Resource.Loading -> CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                 is Resource.Success -> {
                     LazyColumn(
@@ -57,10 +49,11 @@ fun FullChatScreen(
                         reverseLayout = true // Newest messages at bottom
                     ) {
                         items(state.data) { message ->
-                            MessageBubble(message = message, currentUserId = currentUserId)
+                            MessageBubble(message = message, currentUserId = viewModel.currentUserId)
                         }
                     }
                 }
+
                 is Resource.Error -> Text(
                     text = state.message,
                     color = Color.Red,

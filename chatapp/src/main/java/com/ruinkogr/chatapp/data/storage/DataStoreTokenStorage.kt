@@ -50,12 +50,6 @@ class DataStoreTokenStorage(private val context: Context) : TokenStorage {
         }
     }
 
-    override suspend fun isUserLoggedInSync(): Boolean {
-        return !context.dataStore.data.map { preferences ->
-            preferences[accessTokenKey]
-        }.first().isNullOrEmpty()
-    }
-
     override suspend fun getCurrentUserId(): Int? {
         return context.dataStore.data.map { preferences ->
             preferences[userIdKey]

@@ -12,6 +12,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -29,7 +30,9 @@ import com.ruinkogr.chatapp.ui.theme.ChatAppTheme
 import com.ruinkogr.chatapp.ui.users.UsersScreen
 import com.ruinkogr.chatapp.ui.users.UsersViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -66,18 +69,13 @@ class MainActivity : ComponentActivity() {
                     }
                 }
 
-                // Suspend method call.
-                // Null means the value is not read yet
-                val isLoggedInState by produceState<Boolean?>(initialValue = null, tokenStorage) {
-                    value = tokenStorage.isUserLoggedInSync()
+                val currentUserId by produceState<Int?>(initialValue = null, tokenStorage) {
+                    delay(2000.milliseconds)
+                    value = tokenStorage.getCurrentUserId()
                 }
 
-                if (isLoggedInState == null) {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator()
-                    }
-                } else {
-                    val startScreen = if (isLoggedInState == true) "users_list" else "login_screen"
+                currentUserId?.let { currUserId ->
+                    val startScreen = if (currentUserId == -1) "login_screen" else "users_list"
 
                     NavHost(
                         navController = navController,
@@ -118,23 +116,29 @@ class MainActivity : ComponentActivity() {
                             UsersScreen(
                                 viewModel = usersViewModel,
                                 onUserClick = { selectedUserId ->
-                                    navController.navigate("chat_screen/$selectedUserId")
+                                    navController.navigate("chat_screen/$currUserId/$selectedUserId")
                                 }
                             )
                         }
 
                         // Chat screen
                         composable(
-                            route = "chat_screen/{chatWithUserId}",
-                            arguments = listOf(navArgument("chatWithUserId") { type = NavType.IntType })
+                            route = "chat_screen/{currentUserId}/{chatWithUserId}",
+                            arguments = listOf(
+                                navArgument("currentUserId") { type = NavType.IntType },
+                                navArgument("chatWithUserId") { type = NavType.IntType }
+                            )
                         ) { backStackEntry ->
-                            val chatWithUserId = backStackEntry.arguments?.getInt("chatWithUserId") ?: 0
+                            val chatViewModel: ChatViewModel = hiltViewModel()
+
                             FullChatScreen(
                                 viewModel = chatViewModel,
-                                currentUserId = 1, // TODO login must inform about ID
-                                chatWithUserId = chatWithUserId
                             )
                         }
+                    }
+                } ?: run {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
                     }
                 }
             }
