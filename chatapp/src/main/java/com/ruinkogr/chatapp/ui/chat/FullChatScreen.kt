@@ -49,7 +49,7 @@ fun FullChatScreen(
                         reverseLayout = true // Newest messages at bottom
                     ) {
                         items(state.data) { message ->
-                            MessageBubble(message = message, currentUserId = viewModel.currentUserId)
+                            MessageBubble(message = message, currentUserId = viewModel.getCurrentUserId())
                         }
                     }
                 }

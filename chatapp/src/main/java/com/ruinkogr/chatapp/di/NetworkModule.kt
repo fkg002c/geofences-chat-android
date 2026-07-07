@@ -2,6 +2,7 @@ package com.ruinkogr.chatapp.di
 
 import android.content.Context
 import com.ruinkogr.chatapp.data.remote.AuthService
+import com.ruinkogr.chatapp.data.remote.FcmService
 import com.ruinkogr.chatapp.data.remote.MessagesService
 import com.ruinkogr.chatapp.data.remote.UsersService
 import com.ruinkogr.chatapp.data.remote.retrofit.AuthInterceptor
@@ -46,6 +47,13 @@ object NetworkModule {
     fun provideAuthService(@Named("AuthOkHttp") okHttpClient: OkHttpClient): AuthService {
         val retrofit = RetrofitClient.createRetrofit(okHttpClient)
         return retrofit.create(AuthService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideFcmService(@Named("MainOkHttp") okHttpClient: OkHttpClient): FcmService {
+        val retrofit = RetrofitClient.createRetrofit(okHttpClient)
+        return retrofit.create(FcmService::class.java)
     }
 
     @Provides

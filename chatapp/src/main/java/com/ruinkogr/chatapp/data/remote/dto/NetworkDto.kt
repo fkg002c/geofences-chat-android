@@ -16,6 +16,8 @@ data class TokenResponse(
 @Serializable
 data class LoginResponse(
     @SerializedName("id") val id: Int,
+    @SerializedName("username") val username: String,
+    @SerializedName("email") val email: String,
     @SerializedName("accessToken") val accessToken: String,
     @SerializedName("refreshToken") val refreshToken: String
 )
@@ -30,5 +32,10 @@ data class LoginRequest(
 data class RegisterRequest(
     @SerializedName("username") val username: String,
     @SerializedName("email") val email: String,
-    @SerializedName("password") val password: String
+    @SerializedName("password") val password: String,
+    @SerializedName("firebaseUid") val firebaseUid: String
+)
+
+data class FcmTokenRequest(
+    val fcmToken: String
 )
