@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
     alias(libs.plugins.android.dagger.hilt)
+    alias(libs.plugins.android.google.firebase)
 }
 
 android {
@@ -88,6 +89,12 @@ dependencies {
     implementation(libs.androidx.appcompat)
     // Navigation Compose
     implementation(libs.androidx.navigation.compose)
+    // Firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.auth.ktx)
+    implementation(libs.firebase.messaging.ktx)
+    implementation(libs.kotlinx.coroutines.play.services) // await() call on FB tasks
+    implementation(libs.play.services.cloud.messaging)
 }
 
 configurations.configureEach {

@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">Geo Chat</string>
+    <string name="app_name">Geo Chat App</string>
+    <string name="chat_activity_name">Geo Chat</string>
 </resources>
