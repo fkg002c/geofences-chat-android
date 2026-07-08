@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.ruinkogr.chatapp.data.local.AppDatabase
 import com.ruinkogr.chatapp.data.local.MessageDao
+import com.ruinkogr.chatapp.ui.users.ServerStatusManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -23,6 +24,12 @@ object DatabaseModule {
             AppDatabase::class.java,
             "chat_app_database"
         ).build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideServerStatusManager(@ApplicationContext context: Context): ServerStatusManager {
+        return ServerStatusManager(context)
     }
 
     @Provides

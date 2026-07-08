@@ -2,9 +2,12 @@ package com.ruinkogr.chatapp.ui.users
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -18,6 +21,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -42,6 +46,7 @@ fun UsersScreen(
 ) {
     val stableOnUserClick = remember(onUserClick) { onUserClick }
     val stableOnLogoutSuccess = remember(onLogoutSuccess) { onLogoutSuccess }
+    val isTrackingEnabled by usersViewModel.isServerTrackingEnabled.collectAsState()
 
     var menuExpanded by remember { mutableStateOf(false) }
 
@@ -71,6 +76,28 @@ fun UsersScreen(
                         expanded = menuExpanded,
                         onDismissRequest = { menuExpanded = false }
                     ) {
+                        // Пункт с чекбоксом/свитчем
+                        DropdownMenuItem(
+                            text = {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text("Отслеживать статус сервера")
+                                    Spacer(modifier = Modifier.width(12.dp))
+                                    Switch(
+                                        checked = isTrackingEnabled,
+                                        onCheckedChange = null // null, так как клик обрабатывает весь пункт меню
+                                    )
+                                }
+                            },
+                            onClick = {
+                                // Инвертируем текущее состояние
+                                usersViewModel.onTrackingToggled(!isTrackingEnabled)
+                            }
+                        )
+
+                        HorizontalDivider() // Разделитель
+
                         DropdownMenuItem(
                             text = {
                                 Text(
@@ -93,6 +120,7 @@ fun UsersScreen(
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
+            ServerStatusBanner()
             when (val state = usersState) {
                 is UsersUiState.Loading -> CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                 is UsersUiState.Success -> {
