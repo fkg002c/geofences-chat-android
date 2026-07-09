@@ -1,16 +1,26 @@
 package com.ruinkogr.chatapp.service
 
+import android.Manifest
 import android.app.ActivityManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.util.Log
+import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.app.RemoteInput
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import com.ruinkogr.chatapp.R
 import com.ruinkogr.chatapp.data.local.MessageDao
 import com.ruinkogr.chatapp.data.local.MessageEntity
 import com.ruinkogr.chatapp.data.remote.FcmService
 import com.ruinkogr.chatapp.data.remote.dto.FcmTokenRequest
+import com.ruinkogr.chatapp.receiver.NotificationActionReceiver
+import com.ruinkogr.chatapp.ui.MainActivity
 import com.ruinkogr.chatapp.ui.users.ServerStatusMonitor
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -64,33 +74,14 @@ class AppFirebaseMessagingService : FirebaseMessagingService() {
 
             // Direct DB insert
             serviceScope.launch {
-                messageDao.insertMessages(listOf(incomingMessage))
+                val messageId = messageDao.insertMessages(listOf(incomingMessage)).getOrNull(0) ?: -1
                 // if chat screen is open then new message appears
 
                 if (!isAppInForeground()) {
-                    showChatNotification(senderName, content)
+//                    showChatNotification(senderName, content)
+                    showAdvancedChatNotification(senderId, messageId.toInt(), senderName, content)
                 }
             }
-        }
-
-        if (remoteMessage.data.isNotEmpty()) {
-            val senderId = remoteMessage.data["senderId"]?.toIntOrNull() ?: return
-            val receiverId = remoteMessage.data["receiverId"]?.toIntOrNull() ?: return
-            val content = remoteMessage.data["content"] ?: return
-            val id = remoteMessage.data["id"]?.toIntOrNull() ?: return
-            val createdAt = remoteMessage.data["createdAt"] ?: return
-
-            val incomingMessage = MessageEntity(
-                id = id,
-                senderId = senderId,
-                receiverId = receiverId,
-                content = content,
-                isRead = false,
-                createdAt = createdAt
-            )
-
-
-            // TODO : Notification
         }
     }
 
@@ -162,6 +153,60 @@ class AppFirebaseMessagingService : FirebaseMessagingService() {
             .build()
 
         notificationManager.notify(999, notification)
+    }
+
+    fun showAdvancedChatNotification(senderId: Int, messageId: Int, senderName: String, content: String) {
+        val channelId = "chat_messages_channel"
+
+        val contentIntent = Intent(this, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            putExtra("OPEN_CHAT_WITH_USER_ID", senderId)
+        }
+        val contentPendingIntent = PendingIntent.getActivity(
+            this, senderId, contentIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val readIntent = Intent(this, NotificationActionReceiver::class.java).apply {
+            action = "ACTION_MARK_AS_READ"
+            putExtra("MESSAGE_ID", messageId)
+            putExtra("SENDER_ID", senderId)
+        }
+        val readPendingIntent = PendingIntent.getBroadcast(
+            this, messageId, readIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val replyIntent = Intent(this, NotificationActionReceiver::class.java).apply {
+            action = "ACTION_REPLY"
+            putExtra("SENDER_ID", senderId)
+        }
+        val replyPendingIntent = PendingIntent.getBroadcast(
+            this, senderId, replyIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
+        )
+
+        val remoteInput = RemoteInput.Builder("KEY_TEXT_REPLY")
+            .setLabel("Type message...")
+            .build()
+
+        val replyAction = NotificationCompat.Action.Builder(
+            android.R.drawable.ic_menu_send, "Reply", replyPendingIntent
+        ).addRemoteInput(remoteInput).build()
+
+        val notification = NotificationCompat.Builder(this, channelId)
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setContentTitle(senderName)
+            .setContentText(content)
+            .setContentIntent(contentPendingIntent)
+            .setAutoCancel(true)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .addAction(android.R.drawable.ic_menu_agenda, "Mark as Read", readPendingIntent)
+            .addAction(replyAction)
+            .build()
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+            NotificationManagerCompat.from(this).notify(senderId, notification)
+        } else {
+            Log.w(TAG, "Post notifications permission is not granted")
+        }
     }
 
 
