@@ -13,8 +13,11 @@ interface MessageDao {
     fun getChatHistoryFlow(currentUserId: Int, chatWithId: Int): Flow<List<MessageEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertMessages(messages: List<MessageEntity>)
+    suspend fun insertMessages(messages: List<MessageEntity>): List<Long>
 
     @Query("DELETE FROM cached_messages")
     suspend fun clearAllMessages()
+
+    @Query("UPDATE cached_messages SET isRead = 1 WHERE id = :id")
+    suspend fun markAsRead(id: Int)
 }
