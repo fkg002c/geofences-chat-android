@@ -2,6 +2,7 @@ package com.ruinkogr.chatapp.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -22,6 +23,8 @@ import com.ruinkogr.chatapp.ui.auth.LoginScreen
 import com.ruinkogr.chatapp.ui.auth.RegisterScreen
 import com.ruinkogr.chatapp.ui.chat.ChatViewModel
 import com.ruinkogr.chatapp.ui.chat.FullChatScreen
+import com.ruinkogr.chatapp.ui.settings.SettingsScreen
+import com.ruinkogr.chatapp.ui.settings.SettingsViewModel
 import com.ruinkogr.chatapp.ui.theme.ChatAppTheme
 import com.ruinkogr.chatapp.ui.users.UsersScreen
 import com.ruinkogr.chatapp.ui.users.UsersViewModel
@@ -112,17 +115,29 @@ class MainActivity : ComponentActivity() {
                     // Users screen
                     composable("users_list") {
                         val usersViewModel: UsersViewModel = hiltViewModel()
-                        val authViewModel: AuthViewModel = hiltViewModel()
+//                        val authViewModel: AuthViewModel = hiltViewModel()
+                        // 1. Оборачиваем навигационные действия в remember
+                        val onUserClickRemembered = remember(navController) {
+                            { selectedUserId: Int -> navController.navigate("chat_screen/$selectedUserId") }
+                        }
+                        val onSettingsClickRemembered = remember(navController) {
+                            { navController.navigate("settings_screen") }
+                        }
+                        val onLogoutSuccessRemembered = remember(navController) {
+                            {
+                                Log.d("Navigation", "Redirecting to Login screen...onLogoutSuccessRemembered")
+                                navController.navigate("login_screen") {
+                                    popUpTo("users_list") { inclusive = true }
+                                }
+                            }
+                        }
 
                         UsersScreen(
                             usersViewModel = usersViewModel,
                             authViewModel = authViewModel,
-                            onUserClick = { selectedUserId ->
-                                navController.navigate("chat_screen/$selectedUserId")
-                            },
-                            onLogoutSuccess = {
-                                //TODO
-                            }
+                            onUserClick = onUserClickRemembered,
+                            onSettingsClick = onSettingsClickRemembered,
+                            onLogoutSuccess = onLogoutSuccessRemembered
                         )
                     }
 
@@ -147,6 +162,11 @@ class MainActivity : ComponentActivity() {
                             }
                         }
                         FullChatScreen(viewModel = chatViewModel)
+                    }
+                    // Settings Screen
+                    composable("settings_screen") {
+                        val settingsViewModel: SettingsViewModel = hiltViewModel()
+                        SettingsScreen(settingsViewModel, onClose = { navController.popBackStack() })
                     }
                 }
             }

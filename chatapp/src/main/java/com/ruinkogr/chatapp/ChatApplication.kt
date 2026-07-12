@@ -7,12 +7,23 @@ import android.content.ContentResolver
 import android.content.Context
 import android.media.AudioAttributes
 import androidx.core.net.toUri
+import androidx.lifecycle.ProcessLifecycleOwner
+import androidx.lifecycle.lifecycleScope
+import com.ruinkogr.chatapp.ui.settings.SettingsManager
 import dagger.hilt.android.HiltAndroidApp
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
 @HiltAndroidApp
 class ChatApplication : Application() {
     override fun onCreate() {
         super.onCreate()
+        SettingsManager(applicationContext).let { manager ->
+            ProcessLifecycleOwner.get().lifecycleScope.launch {
+                val savedLanguage = manager.languageCodeFlow.first()
+                manager.applyLocale(savedLanguage)
+            }
+        }
         createNotificationChannels(applicationContext)
     }
 

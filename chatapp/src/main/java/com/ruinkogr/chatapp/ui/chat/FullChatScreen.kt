@@ -59,6 +59,8 @@ fun FullChatScreen(
                     color = Color.Red,
                     modifier = Modifier.align(Alignment.Center)
                 )
+
+                is Resource.LoggedOut -> {}
             }
         }
     }
