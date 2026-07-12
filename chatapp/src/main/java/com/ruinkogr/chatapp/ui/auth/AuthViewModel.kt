@@ -118,7 +118,7 @@ class AuthViewModel @Inject constructor(
                 FirebaseAuth.getInstance().signOut()
                 tokenStorage.clearSession()
                 // reset state for LaunchedEffect
-                _loginState.value = null
+                _loginState.value = Resource.LoggedOut
             } catch (e: Exception) {
                 // log error
             }

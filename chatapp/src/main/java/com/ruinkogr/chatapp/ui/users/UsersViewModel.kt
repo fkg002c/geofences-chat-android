@@ -10,13 +10,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class UsersViewModel @Inject constructor(
     repository: ChatRepository,
-    private val statusManager: ServerStatusManager
 ) : ViewModel() {
 
     // Single flow creation on ViewModel start.
@@ -27,6 +25,7 @@ class UsersViewModel @Inject constructor(
                 is Resource.Loading -> UsersUiState.Loading
                 is Resource.Success -> UsersUiState.Success(users = resource.data)
                 is Resource.Error -> UsersUiState.Error(message = resource.message)
+                is Resource.LoggedOut -> UsersUiState.Error(message = "logged out")
             }
         }
         .distinctUntilChanged() // <-- Skip emit if data is not changed
@@ -35,18 +34,4 @@ class UsersViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = UsersUiState.Loading
         )
-
-    val isServerTrackingEnabled = statusManager.isTrackingEnabled
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = false
-        )
-
-    fun onTrackingToggled(enabled: Boolean) {
-        viewModelScope.launch {
-            statusManager.toggleTracking(enabled)
-        }
-    }
-
 }

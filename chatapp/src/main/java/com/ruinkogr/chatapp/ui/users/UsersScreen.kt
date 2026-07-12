@@ -2,12 +2,9 @@ package com.ruinkogr.chatapp.ui.users
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -21,7 +18,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -34,31 +30,27 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.ruinkogr.chatapp.data.Resource
 import com.ruinkogr.chatapp.ui.auth.AuthViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UsersScreen(
     usersViewModel: UsersViewModel,
-    authViewModel: AuthViewModel,          // for logout
+    authViewModel: AuthViewModel,
     onUserClick: (Int) -> Unit,
-    onLogoutSuccess: () -> Unit            //for go to Login screen
+    onSettingsClick: () -> Unit,
+    onLogoutSuccess: () -> Unit
 ) {
-    val stableOnUserClick = remember(onUserClick) { onUserClick }
-    val stableOnLogoutSuccess = remember(onLogoutSuccess) { onLogoutSuccess }
-    val isTrackingEnabled by usersViewModel.isServerTrackingEnabled.collectAsState()
-
+    val usersState by usersViewModel.usersState.collectAsState()
     var menuExpanded by remember { mutableStateOf(false) }
-
     // Logout listener
     val loginState by authViewModel.loginState.collectAsState()
     LaunchedEffect(loginState) {
-        if (loginState == null) {
-            stableOnLogoutSuccess()
+        if (loginState is Resource.LoggedOut) {
+            onLogoutSuccess()
         }
     }
-
-    val usersState by usersViewModel.usersState.collectAsState()
 
     Scaffold(
         topBar = {
@@ -76,23 +68,15 @@ fun UsersScreen(
                         expanded = menuExpanded,
                         onDismissRequest = { menuExpanded = false }
                     ) {
-                        // Пункт с чекбоксом/свитчем
                         DropdownMenuItem(
                             text = {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Text("Отслеживать статус сервера")
-                                    Spacer(modifier = Modifier.width(12.dp))
-                                    Switch(
-                                        checked = isTrackingEnabled,
-                                        onCheckedChange = null // null, так как клик обрабатывает весь пункт меню
-                                    )
-                                }
+                                Text(
+                                    text = "Settings"
+                                )
                             },
                             onClick = {
-                                // Инвертируем текущее состояние
-                                usersViewModel.onTrackingToggled(!isTrackingEnabled)
+                                menuExpanded = false
+                                onSettingsClick()
                             }
                         )
 
@@ -133,7 +117,7 @@ fun UsersScreen(
                                 text = user.username,
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .clickable { stableOnUserClick(user.id) }
+                                    .clickable { onUserClick(user.id) }
                                     .padding(16.dp)
                             )
                             HorizontalDivider()

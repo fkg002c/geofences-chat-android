@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Гео Чат приложение</string>
+    <string name="chat_activity_name">Гео Чат</string>
+    <string name="select_app_language">Выберите язык приложения</string>
+    <string name="system_language">Системный</string>
+    <string name="russian_language">Русский</string>
+    <string name="english_language">Английский</string>
+    <string name="label_cancel">Отмена</string>
+    <string name="label_settings">Настройки</string>
+    <string name="label_back">Назад</string>
+    <string name="label_app_language">Язык приложения</string>
+    <string name="label_server_state">Состояние сервера</string>
+    <string name="label_monitor_server_state">Отслеживать состояние сервера</string>
+    <string name="label_on">Включено</string>
+    <string name="label_off">Выключено</string>
+</resources>

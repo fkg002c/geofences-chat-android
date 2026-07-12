@@ -66,6 +66,9 @@ class ChatViewModel @Inject constructor(
 
                 is Resource.Loading -> { /* Optional: for sending */
                 }
+
+                is Resource.LoggedOut -> {}
+
             }
         }
     }
