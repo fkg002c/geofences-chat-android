@@ -102,3 +102,35 @@ dependencies {
 configurations.configureEach {
     exclude(group = "com.intellij", module = "annotations")
 }
+
+// 1. Регистрируем наш таск проверки и копирования файла
+val copyGoogleServicesTask = tasks.register("checkAndCopyGoogleServices") {
+    val externalFile = file("../../_secrets_/google-services.json")
+    val targetFile = file("google-services.json")
+
+    // Явно указываем входы и выходы, чтобы Gradle понимал цепочку зависимостей
+    inputs.file(externalFile).optional()
+    outputs.file(targetFile)
+
+    doLast {
+        if (!targetFile.exists()) {
+            if (externalFile.exists()) {
+                externalFile.copyTo(targetFile, overwrite = true)
+                logger.lifecycle("🚀 google-services.json успешно скопирован.")
+            } else {
+                logger.error("❌ Внешний файл google-services.json не найден по пути: ${externalFile.absolutePath}")
+            }
+        }
+    }
+}
+
+// 2. Привязываем копирование ко ВСЕМ задачам плагина Google Services
+// Это автоматически уберет ошибку "uses this output without declaring a dependency"
+tasks.matching { it.name.startsWith("process") && it.name.endsWith("GoogleServices") }.configureEach {
+    dependsOn(copyGoogleServicesTask)
+}
+
+// 3. Дополнительно оставляем привязку к preBuild для надежности при первом импорте
+tasks.named("preBuild") {
+    dependsOn(copyGoogleServicesTask)
+}
