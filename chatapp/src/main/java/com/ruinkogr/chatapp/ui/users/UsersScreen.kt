@@ -46,8 +46,8 @@ fun UsersScreen(
     var menuExpanded by remember { mutableStateOf(false) }
     // Logout listener
     val loginState by authViewModel.loginState.collectAsState()
-    LaunchedEffect(loginState) {
-        if (loginState is Resource.LoggedOut) {
+    LaunchedEffect(Unit) {
+        authViewModel.logoutEvent.collect {
             onLogoutSuccess()
         }
     }

@@ -12,8 +12,10 @@ import com.ruinkogr.chatapp.data.remote.dto.LoginRequest
 import com.ruinkogr.chatapp.data.remote.dto.RegisterRequest
 import com.ruinkogr.chatapp.data.storage.TokenStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -111,14 +113,16 @@ class AuthViewModel @Inject constructor(
         }
     }
 
+    private val _logoutEvent = MutableSharedFlow<Unit>()
+    val logoutEvent = _logoutEvent.asSharedFlow()
+
     fun logout() {
         viewModelScope.launch {
             try {
                 fcmService.logout()
                 FirebaseAuth.getInstance().signOut()
                 tokenStorage.clearSession()
-                // reset state for LaunchedEffect
-                _loginState.value = Resource.LoggedOut
+                _logoutEvent.emit(Unit)
             } catch (e: Exception) {
                 // log error
             }

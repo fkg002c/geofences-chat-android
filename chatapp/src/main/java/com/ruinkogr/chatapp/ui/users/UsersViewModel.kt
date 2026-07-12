@@ -25,7 +25,6 @@ class UsersViewModel @Inject constructor(
                 is Resource.Loading -> UsersUiState.Loading
                 is Resource.Success -> UsersUiState.Success(users = resource.data)
                 is Resource.Error -> UsersUiState.Error(message = resource.message)
-                is Resource.LoggedOut -> UsersUiState.Error(message = "logged out")
             }
         }
         .distinctUntilChanged() // <-- Skip emit if data is not changed
