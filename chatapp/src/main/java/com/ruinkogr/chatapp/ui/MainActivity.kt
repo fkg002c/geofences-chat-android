@@ -23,6 +23,8 @@ import com.ruinkogr.chatapp.ui.auth.LoginScreen
 import com.ruinkogr.chatapp.ui.auth.RegisterScreen
 import com.ruinkogr.chatapp.ui.chat.ChatViewModel
 import com.ruinkogr.chatapp.ui.chat.FullChatScreen
+import com.ruinkogr.chatapp.ui.search.SearchScreen
+import com.ruinkogr.chatapp.ui.search.SearchViewModel
 import com.ruinkogr.chatapp.ui.settings.SettingsScreen
 import com.ruinkogr.chatapp.ui.settings.SettingsViewModel
 import com.ruinkogr.chatapp.ui.theme.ChatAppTheme
@@ -123,6 +125,9 @@ class MainActivity : ComponentActivity() {
                         val onSettingsClickRemembered = remember(navController) {
                             { navController.navigate("settings_screen") }
                         }
+                        val onSearchClickRemembered = remember(navController) {
+                            { navController.navigate("manual_search_screen") }
+                        }
                         val onLogoutSuccessRemembered = remember(navController) {
                             {
                                 Log.d("Navigation", "Redirecting to Login screen...onLogoutSuccessRemembered")
@@ -137,6 +142,7 @@ class MainActivity : ComponentActivity() {
                             authViewModel = authViewModel,
                             onUserClick = onUserClickRemembered,
                             onSettingsClick = onSettingsClickRemembered,
+                            onSearchClick = onSearchClickRemembered,
                             onLogoutSuccess = onLogoutSuccessRemembered
                         )
                     }
@@ -168,6 +174,12 @@ class MainActivity : ComponentActivity() {
                         val settingsViewModel: SettingsViewModel = hiltViewModel()
                         SettingsScreen(settingsViewModel, onClose = { navController.popBackStack() })
                     }
+                    // ManualSearchScreen
+                    composable("manual_search_screen") {
+                        val searchViewModel: SearchViewModel = hiltViewModel()
+                        SearchScreen(searchViewModel, onClose = { navController.popBackStack() })
+                    }
+
                 }
             }
         }

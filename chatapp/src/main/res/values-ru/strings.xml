@@ -8,6 +8,8 @@
     <string name="english_language">Английский</string>
     <string name="label_cancel">Отмена</string>
     <string name="label_settings">Настройки</string>
+    <string name="label_logout">Выход</string>
+    <string name="label_search">Поиск</string>
     <string name="label_back">Назад</string>
     <string name="label_app_language">Язык приложения</string>
     <string name="label_server_state">Состояние сервера</string>

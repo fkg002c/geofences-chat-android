@@ -29,8 +29,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.ruinkogr.chatapp.data.Resource
+import com.ruinkogr.chatapp.R.string
 import com.ruinkogr.chatapp.ui.auth.AuthViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -40,6 +41,7 @@ fun UsersScreen(
     authViewModel: AuthViewModel,
     onUserClick: (Int) -> Unit,
     onSettingsClick: () -> Unit,
+    onSearchClick: () -> Unit,
     onLogoutSuccess: () -> Unit
 ) {
     val usersState by usersViewModel.usersState.collectAsState()
@@ -70,8 +72,20 @@ fun UsersScreen(
                     ) {
                         DropdownMenuItem(
                             text = {
+                                Text(stringResource(string.label_search))
+                            },
+                            onClick = {
+                                menuExpanded = false
+                                onSearchClick()
+                            }
+                        )
+
+                        HorizontalDivider() // Разделитель
+
+                        DropdownMenuItem(
+                            text = {
                                 Text(
-                                    text = "Settings"
+                                    text = stringResource(string.label_settings)
                                 )
                             },
                             onClick = {
@@ -85,7 +99,7 @@ fun UsersScreen(
                         DropdownMenuItem(
                             text = {
                                 Text(
-                                    text = "Logout",
+                                    text = stringResource(string.label_logout),
                                     color = MaterialTheme.colorScheme.error
                                 )
                             },
