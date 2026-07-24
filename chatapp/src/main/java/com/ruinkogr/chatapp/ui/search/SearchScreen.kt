@@ -27,14 +27,19 @@ import com.ruinkogr.chatapp.R
 
 @Composable
 fun SearchScreen(
-    viewModel: SearchViewModel,
+    viewModel: MvvmSearchViewModel,
     onClose: () -> Unit
 ) {
     val state by viewModel.uiState.collectAsState()
 
     SearchScreenContent(
         state = state,
-        onIntent = { intent -> viewModel.sendIntent(intent) },
+        onIntent = { intent ->
+            when (intent) {
+                is SearchIntent.ChangeQuery -> viewModel.onQueryChanged(intent.text)
+                is SearchIntent.ClearSearch -> viewModel.onClearSearch()
+            }
+        },
         onClose = { onClose() }
     )
 }
