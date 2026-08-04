@@ -97,6 +97,8 @@ dependencies {
     implementation(libs.firebase.messaging.ktx)
     implementation(libs.kotlinx.coroutines.play.services) // await() call on FB tasks
     implementation(libs.play.services.cloud.messaging)
+
+    implementation("com.ezylang:EvalEx:3.7.0") //https://github.com/ezylang/EvalEx
 }
 
 configurations.configureEach {

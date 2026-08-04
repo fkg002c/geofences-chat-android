@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.AcUnit
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -24,6 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.ruinkogr.chatapp.R
+import com.ruinkogr.chatapp.ui.temp.main
 
 @Composable
 fun SearchScreen(
@@ -69,6 +71,10 @@ fun SearchScreenContent(
                 .padding(innerPadding)
                 .padding(horizontal = 16.dp)
         ) {
+            IconButton(onClick = { main() }) {
+                Icon(Icons.Default.AcUnit, contentDescription = "tbd")
+            }
+
             TextField(
                 value = state.query,
                 onValueChange = { newValue ->
