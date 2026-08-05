@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.ruinkogr.chatapp.data.storage
 
 import android.content.Context

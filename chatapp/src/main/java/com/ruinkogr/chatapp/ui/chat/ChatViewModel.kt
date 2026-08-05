@@ -50,7 +50,7 @@ class ChatViewModel @Inject constructor(
 
     // errors flow for Toast or SnakeBar
     private val _errorChannel = Channel<String>()
-    val errorSignal = _errorChannel.receiveAsFlow()
+    val errorSignal = _errorChannel.receiveAsFlow()  // TODO implementation
 
     fun sendMessage(content: String) {
         viewModelScope.launch {
@@ -61,7 +61,7 @@ class ChatViewModel @Inject constructor(
                 }
 
                 is Resource.Error -> {
-                    _errorChannel.send(result.message ?: "Send error")
+                    _errorChannel.send(result.message)
                 }
 
                 is Resource.Loading -> { /* Optional: for sending */

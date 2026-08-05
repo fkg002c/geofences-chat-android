@@ -50,7 +50,8 @@ class AuthViewModel @Inject constructor(
                     )
 
                     // 3. get FCM Id
-                    val fcmToken = FirebaseMessaging.getInstance().getToken().await() // OLD method
+                    @Suppress("DEPRECATION") // TODO fix
+                    val fcmToken = FirebaseMessaging.getInstance().token.await() // OLD method
                     // val installationId = FirebaseInstallations.getInstance().id.await() // Modern way
 
                     // 4. update FCM token on app server
@@ -123,8 +124,8 @@ class AuthViewModel @Inject constructor(
                 FirebaseAuth.getInstance().signOut()
                 tokenStorage.clearSession()
                 _logoutEvent.emit(Unit)
-            } catch (e: Exception) {
-                // log error
+            } catch (_: Exception) {
+                // TODO implementation
             }
         }
     }
