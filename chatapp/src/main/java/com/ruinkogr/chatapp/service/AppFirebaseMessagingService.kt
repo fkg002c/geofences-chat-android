@@ -85,6 +85,8 @@ class AppFirebaseMessagingService : FirebaseMessagingService() {
         }
     }
 
+    @Suppress("DEPRECATION") // TODO fix
+    @Deprecated("Deprecated in Java") // TODO fix
     override fun onNewToken(token: String) {
         super.onNewToken(token)
         Log.i(TAG, "onNewToken: $token")
