@@ -10,12 +10,18 @@ import androidx.core.net.toUri
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.ruinkogr.chatapp.ui.settings.SettingsManager
+import com.ruinkogr.chatapp.websocket.AppLifecycleObserver
+import com.ruinkogr.chatapp.websocket.WebSocketManager
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltAndroidApp
 class ChatApplication : Application() {
+    @Inject
+    lateinit var webSocketManager: WebSocketManager
+
     override fun onCreate() {
         super.onCreate()
         SettingsManager(applicationContext).let { manager ->
@@ -25,6 +31,10 @@ class ChatApplication : Application() {
             }
         }
         createNotificationChannels(applicationContext)
+
+        ProcessLifecycleOwner.get().lifecycle.addObserver(
+            AppLifecycleObserver(webSocketManager)
+        )
     }
 
     fun createNotificationChannels(context: Context) {

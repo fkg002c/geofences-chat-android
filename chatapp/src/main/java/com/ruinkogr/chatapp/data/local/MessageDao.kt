@@ -20,4 +20,7 @@ interface MessageDao {
 
     @Query("UPDATE cached_messages SET isRead = 1 WHERE id = :id")
     suspend fun markAsRead(id: Int)
+
+    @Query("SELECT EXISTS(SELECT 1 FROM cached_messages WHERE id = :messageId LIMIT 1)")
+    suspend fun isMessageExists(messageId: Int): Boolean
 }

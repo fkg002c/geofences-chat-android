@@ -2,6 +2,7 @@ package com.ruinkogr.chatapp.data.repository
 
 import com.ruinkogr.chatapp.data.Resource
 import com.ruinkogr.chatapp.data.local.MessageDao
+import com.ruinkogr.chatapp.data.local.MessageEntity
 import com.ruinkogr.chatapp.data.local.toDto
 import com.ruinkogr.chatapp.data.local.toEntity
 import com.ruinkogr.chatapp.data.remote.MessagesService
@@ -86,6 +87,11 @@ class ChatRepository @Inject constructor(
         return response
     }
 
+    suspend fun saveMessage(messageEntity: MessageEntity) {
+        messageDao.insertMessages(listOf(messageEntity))
+    }
+
+    suspend fun checkIfMessageExists(id: Int) = messageDao.isMessageExists(id)
 
     fun getUsers(): Flow<Resource<List<UserDto>>> = flow {
         emit(Resource.Loading)
