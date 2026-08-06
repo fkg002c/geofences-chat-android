@@ -7,8 +7,10 @@ import com.ruinkogr.chatapp.data.remote.MessagesService
 import com.ruinkogr.chatapp.data.remote.UsersService
 import com.ruinkogr.chatapp.data.remote.retrofit.AuthInterceptor
 import com.ruinkogr.chatapp.data.remote.retrofit.RetrofitClient
+import com.ruinkogr.chatapp.data.repository.ChatRepository
 import com.ruinkogr.chatapp.data.storage.EncryptedPrefsTokenStorage
 import com.ruinkogr.chatapp.data.storage.TokenStorage
+import com.ruinkogr.chatapp.websocket.WebSocketManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -82,5 +84,21 @@ object NetworkModule {
     @Singleton
     fun provideMessagesService(@Named("MainRetrofit") retrofit: Retrofit): MessagesService {
         return retrofit.create(MessagesService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideWebSocketManager(
+        @Named("AuthOkHttp") okHttpClient: OkHttpClient,
+        tokenStorage: TokenStorage,
+        chatRepository: ChatRepository
+    ): WebSocketManager {
+        return WebSocketManager(
+            okHttpClient = okHttpClient,
+            tokenProvider = {
+                (tokenStorage as EncryptedPrefsTokenStorage).getAccessTokenSync() ?: ""
+            },
+            chatRepository = chatRepository
+        )
     }
 }
