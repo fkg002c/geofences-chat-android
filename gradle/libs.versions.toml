@@ -1,5 +1,5 @@
 [versions]
-agp = "9.3.1"
+agp = "9.3.2"
 coreKtx = "1.19.0"
 junit = "4.13.2"
 junitVersion = "1.3.0"
@@ -7,14 +7,14 @@ espressoCore = "3.7.0"
 lifecycle = "2.11.0"
 activityCompose = "1.13.0"
 kotlin = "2.4.10"
-composeBom = "2026.06.01"
+composeBom = "2026.08.00"
 # Hilt
 ksp = "2.3.9"
 hilt = "2.60.1"
 # Room
 room = "2.8.4"
 # Retrofit - OkHttp
-okhttpAndroid = "5.4.0"
+okhttpAndroid = "5.5.0"
 retrofit = "3.0.0"
 converterGson = "3.0.0"
 # Ktor
@@ -28,13 +28,13 @@ securityCrypto = "1.1.0"
 # Material Icons
 materialIcons = "1.7.8"
 # Appcompat
-appcompat = "1.7.1"
+appcompat = "1.8.0"
 # Navigation Compose
-navigationCompose = "2.9.8"
+navigationCompose = "2.10.0"
 hiltNavigationCompose = "1.4.0"
 # Firebase
 firebase = "4.5.0"
-firebaseBom = "34.17.0"
+firebaseBom = "34.18.0"
 firebaseMessagingKtx = "24.1.2"
 firebaseAuthKtx = "23.2.1"
 kotlinxCoroutinesPlayServices = "1.11.0"

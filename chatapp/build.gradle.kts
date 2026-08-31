@@ -18,8 +18,8 @@ android {
         applicationId = "com.ruinkogr.chatapp"
         minSdk = 26
         targetSdk = 37
-        versionCode = 3
-        versionName = "0.3"
+        versionCode = 4
+        versionName = "0.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -40,6 +40,7 @@ android {
     }
 }
 
+@Suppress("DependencyDuplicate")
 dependencies {
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)
@@ -64,7 +65,6 @@ dependencies {
     ksp(libs.hilt.android.compiler)
     ksp(libs.kotlin.metadata.jvm)
     //Room
-    implementation(libs.androidx.room.compiler)
     implementation(libs.androidx.room.runtime)
     ksp(libs.androidx.room.compiler)
     // Retrofit + OkHttp
