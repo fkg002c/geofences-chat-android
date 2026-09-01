@@ -35,7 +35,7 @@ fun ServerStatusBanner() {
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "Соединение с сервером потеряно. Режим чтения. 🛠️",
+                text = "Connection to server lost. Read-only mode. 🛠️",
                 color = Color.White
             )
         }

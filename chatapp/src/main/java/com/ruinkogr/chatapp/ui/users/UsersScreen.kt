@@ -80,7 +80,7 @@ fun UsersScreen(
                             }
                         )
 
-                        HorizontalDivider() // Разделитель
+                        HorizontalDivider() // Divider
 
                         DropdownMenuItem(
                             text = {

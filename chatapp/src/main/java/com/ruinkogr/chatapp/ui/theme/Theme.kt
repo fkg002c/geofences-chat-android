@@ -59,8 +59,8 @@ fun ChatAppTheme(
             val window = (view.context as Activity).window
             val insetsController = WindowCompat.getInsetsController(window, view)
 
-            // true = ТЕМНЫЕ иконки для светлой темы
-            // false = БЕЛЫЕ иконки для темной темы
+            // true = DARK icons for the light theme
+            // false = LIGHT icons for the dark theme
             insetsController.isAppearanceLightStatusBars = !darkTheme
         }
     }

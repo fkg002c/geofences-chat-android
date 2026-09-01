@@ -18,8 +18,8 @@ android {
         applicationId = "com.ruinkogr.chatapp"
         minSdk = 26
         targetSdk = 37
-        versionCode = 4
-        versionName = "0.4"
+        versionCode = 5
+        versionName = "0.5"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -103,12 +103,12 @@ configurations.configureEach {
     exclude(group = "com.intellij", module = "annotations")
 }
 
-// 1. Регистрируем наш таск проверки и копирования файла
+// 1. Register our task that checks for and copies the file
 val copyGoogleServicesTask = tasks.register("checkAndCopyGoogleServices") {
     val externalFile = file("../../_secrets_/google-services.json")
     val targetFile = file("google-services.json")
 
-    // Явно указываем входы и выходы, чтобы Gradle понимал цепочку зависимостей
+    // Explicitly declare inputs and outputs so Gradle understands the dependency chain
     inputs.file(externalFile).optional()
     outputs.file(targetFile)
 
@@ -116,21 +116,21 @@ val copyGoogleServicesTask = tasks.register("checkAndCopyGoogleServices") {
         if (!targetFile.exists()) {
             if (externalFile.exists()) {
                 externalFile.copyTo(targetFile, overwrite = true)
-                logger.lifecycle("🚀 google-services.json успешно скопирован.")
+                logger.lifecycle("🚀 google-services.json copied successfully.")
             } else {
-                logger.error("❌ Внешний файл google-services.json не найден по пути: ${externalFile.absolutePath}")
+                logger.error("❌ External file google-services.json not found at path: ${externalFile.absolutePath}")
             }
         }
     }
 }
 
-// 2. Привязываем копирование ко ВСЕМ задачам плагина Google Services
-// Это автоматически уберет ошибку "uses this output without declaring a dependency"
+// 2. Hook the copy into ALL Google Services plugin tasks
+// This automatically avoids the "uses this output without declaring a dependency" error
 tasks.matching { it.name.startsWith("process") && it.name.endsWith("GoogleServices") }.configureEach {
     dependsOn(copyGoogleServicesTask)
 }
 
-// 3. Дополнительно оставляем привязку к preBuild для надежности при первом импорте
+// 3. Additionally hook into preBuild for reliability on first import
 tasks.named("preBuild") {
     dependsOn(copyGoogleServicesTask)
 }

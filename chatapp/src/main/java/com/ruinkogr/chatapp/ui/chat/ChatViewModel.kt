@@ -35,7 +35,7 @@ class ChatViewModel @Inject constructor(
             repository.getMessagesWithCache(currentUserId, chatWithUserId)
                 .collect { emit(it) }
         } else {
-            emit(Resource.Error("Пользователь не авторизован"))
+            emit(Resource.Error("User is not authorized"))
         }
     }.stateIn(
         scope = viewModelScope,

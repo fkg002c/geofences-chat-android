@@ -49,7 +49,7 @@ class SettingsManager(private val context: Context) {
             preferences[KEY_TRACK_SERVER] = enabled
         }
 
-        // Интегрируйте сюда вашу старую логику:
+        // Integrate your old logic here:
         try {
             if (enabled) {
                 fcm.subscribeToTopic(topicName).await()

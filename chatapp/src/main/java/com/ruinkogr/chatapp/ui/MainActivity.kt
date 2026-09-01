@@ -42,39 +42,39 @@ class MainActivity : ComponentActivity() {
 
     private val authViewModel: AuthViewModel by viewModels()
 
-    // Состояние для отслеживания кликов по пушам в фореграунде/бэкграунде (горячий старт)
+    // State for tracking push taps in the foreground/background (warm start)
     private var openChatUserIdByPush by mutableStateOf<Int?>(null)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Проверяем интент при холодном старте приложения
+        // Check the intent on a cold start of the app
         val initialChatId = intent?.getIntExtra("OPEN_CHAT_WITH_USER_ID", -1)?.takeIf { it != -1 }
 
         setContent {
             ChatAppTheme {
                 val navController = rememberNavController()
 
-                // Определяем стартовый экран ОДИН РАЗ при создании активности
+                // Determine the start screen ONCE when the activity is created
                 val startScreen = remember {
                     val storage = tokenStorage as EncryptedPrefsTokenStorage
                     val currentUserId = storage.getCurrentUserIdSync()
                     when {
                         currentUserId == -1 -> "login_screen"
-                        initialChatId != null -> "chat_screen/$initialChatId" // Сразу открываем чат
+                        initialChatId != null -> "chat_screen/$initialChatId" // Open the chat directly
                         else -> "users_list"
                     }
                 }
 
-                // Слушаем новые клики по пушам (горячий старт через onNewIntent)
+                // Listen for new push taps (warm start via onNewIntent)
                 openChatUserIdByPush?.let { chatId ->
                     LaunchedEffect(chatId) {
                         navController.navigate("chat_screen/$chatId") {
-                            // Очищаем стек до списка пользователей, чтобы не плодить экраны
+                            // Clear the stack down to the users list to avoid piling up screens
                             popUpTo("users_list") { saveState = true }
                             launchSingleTop = true
                         }
-                        openChatUserIdByPush = null // Сбрасываем состояние после перехода
+                        openChatUserIdByPush = null // Reset the state after navigating
                     }
                 }
 
@@ -116,7 +116,7 @@ class MainActivity : ComponentActivity() {
                     composable("users_list") {
                         val usersViewModel: UsersViewModel = hiltViewModel()
 //                        val authViewModel: AuthViewModel = hiltViewModel()
-                        // 1. Оборачиваем навигационные действия в remember
+                        // 1. Wrap navigation actions in remember
                         val onUserClickRemembered = remember(navController) {
                             { selectedUserId: Int -> navController.navigate("chat_screen/$selectedUserId") }
                         }
@@ -145,17 +145,17 @@ class MainActivity : ComponentActivity() {
                     composable("chat_screen/{chatWithUserId}") { backStackEntry ->
                         val chatViewModel: ChatViewModel = hiltViewModel()
 
-                        // Перехватываем системную кнопку "Назад" на телефоне.
-                        // Если этот чат открылся как стартовый экран, кнопка "Назад" закроет приложение.
-                        // Нам нужно принудительно перенаправить пользователя на список.
+                        // Intercept the system "Back" button on the phone.
+                        // If this chat opened as the start screen, "Back" would close the app.
+                        // We need to force-redirect the user to the list instead.
                         androidx.activity.compose.BackHandler {
-                            // Проверяем, есть ли в стек-треке экран списка пользователей
+                            // Check whether the users list screen is in the back stack
                             val hasUsersListInStack = navController.previousBackStackEntry != null
                             if (hasUsersListInStack) {
                                 navController.popBackStack()
                             } else {
-                                // Если списка в стеке нет (был холодный старт сразу в чат),
-                                // мы очищаем стек и открываем список пользователей вручную
+                                // If the list isn't in the stack (cold start straight into chat),
+                                // clear the stack and open the users list manually
                                 navController.navigate("users_list") {
                                     popUpTo("chat_screen/{chatWithUserId}") { inclusive = true }
                                 }
@@ -174,14 +174,14 @@ class MainActivity : ComponentActivity() {
 
     }
 
-    // Этот метод вызывается, если приложение уже запущено, и мы кликаем по пушу
+    // This is called when the app is already running and a push notification is tapped
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        setIntent(intent) // Обязательно обновляем текущий интент активности
+        setIntent(intent) // Make sure to update the activity's current intent
 
         val chatId = intent.getIntExtra("OPEN_CHAT_WITH_USER_ID", -1)
         if (chatId != -1) {
-            // Триггерим LaunchedEffect внутри Compose для выполнения перехода
+            // Trigger the LaunchedEffect inside Compose to perform the navigation
             openChatUserIdByPush = chatId
         }
     }
