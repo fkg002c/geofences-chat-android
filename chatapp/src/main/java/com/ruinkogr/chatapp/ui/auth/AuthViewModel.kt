@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.messaging.FirebaseMessaging
+import com.ruinkogr.chatapp.R
 import com.ruinkogr.chatapp.data.Resource
 import com.ruinkogr.chatapp.data.remote.AuthService
 import com.ruinkogr.chatapp.data.remote.FcmService
@@ -11,6 +12,7 @@ import com.ruinkogr.chatapp.data.remote.dto.FcmTokenRequest
 import com.ruinkogr.chatapp.data.remote.dto.LoginRequest
 import com.ruinkogr.chatapp.data.remote.dto.RegisterRequest
 import com.ruinkogr.chatapp.data.storage.TokenStorage
+import com.ruinkogr.chatapp.util.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -60,14 +62,18 @@ class AuthViewModel @Inject constructor(
                     if (tokenResponse.isSuccessful) {
                         _loginState.value = Resource.Success(Unit)
                     } else {
-                        _loginState.value = Resource.Error("updateFcmToken error: ${tokenResponse.errorBody()}")
+                        _loginState.value = Resource.Error(
+                            UiText.StringResource(R.string.error_update_fcm_token_format, listOf(tokenResponse.errorBody().toString()))
+                        )
                     }
 
                 } else {
-                    _loginState.value = Resource.Error("Incorrect username or password")
+                    _loginState.value = Resource.Error(UiText.StringResource(R.string.error_incorrect_credentials))
                 }
             } catch (e: Exception) {
-                _loginState.value = Resource.Error("login error: ${e.message}")
+                _loginState.value = Resource.Error(
+                    UiText.StringResource(R.string.error_login_format, listOf(e.message ?: ""))
+                )
             }
         }
     }
@@ -85,7 +91,7 @@ class AuthViewModel @Inject constructor(
                 val firebaseUid = authResult.user?.uid
 
                 if (firebaseUid == null) {
-                    _registerState.value = Resource.Error("Firebase create UID error")
+                    _registerState.value = Resource.Error(UiText.StringResource(R.string.error_firebase_uid))
                     return@launch
                 }
 
@@ -104,12 +110,19 @@ class AuthViewModel @Inject constructor(
                     // Clean FB UID
                     authResult.user?.delete()?.await()
 
-                    val errorMsg = response.errorBody()?.string() ?: "Register error"
-                    _registerState.value = Resource.Error(errorMsg)
+                    val errorBody = response.errorBody()?.string()
+                    val message = if (errorBody != null) {
+                        UiText.DynamicString(errorBody)
+                    } else {
+                        UiText.StringResource(R.string.error_register_generic)
+                    }
+                    _registerState.value = Resource.Error(message)
                 }
 
             } catch (e: Exception) {
-                _registerState.value = Resource.Error("Registration error: ${e.localizedMessage}")
+                _registerState.value = Resource.Error(
+                    UiText.StringResource(R.string.error_registration_format, listOf(e.localizedMessage ?: ""))
+                )
             }
         }
     }

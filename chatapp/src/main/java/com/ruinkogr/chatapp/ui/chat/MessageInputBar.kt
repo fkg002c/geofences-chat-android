@@ -10,8 +10,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import com.ruinkogr.chatapp.R
 
 @Composable
 fun MessageInputBar(
@@ -30,7 +32,7 @@ fun MessageInputBar(
         OutlinedTextField(
             value = textState,
             onValueChange = { textState = it },
-            placeholder = { Text("Message") },
+            placeholder = { Text(stringResource(R.string.hint_message)) },
             modifier = Modifier
                 .weight(1f)
                 .padding(end = 8.dp),
@@ -53,7 +55,7 @@ fun MessageInputBar(
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.Send,
-                contentDescription = "Send"
+                contentDescription = stringResource(R.string.content_desc_send)
             )
         }
     }

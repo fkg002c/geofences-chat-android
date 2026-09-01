@@ -6,8 +6,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import com.ruinkogr.chatapp.R
 import com.ruinkogr.chatapp.data.Resource
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -30,20 +32,20 @@ fun RegisterScreen(
         }
     }
     Scaffold(
-        topBar = { TopAppBar(title = { Text("Register") }) }
+        topBar = { TopAppBar(title = { Text(stringResource(R.string.action_register)) }) }
     ) { innerPadding ->
         Column(
             modifier = Modifier.fillMaxSize().padding(innerPadding),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text("ChatApp registration", style = MaterialTheme.typography.headlineMedium)
+            Text(stringResource(R.string.headline_register), style = MaterialTheme.typography.headlineMedium)
             Spacer(modifier = Modifier.height(16.dp))
 
             OutlinedTextField(
                 value = username,
                 onValueChange = { username = it },
-                label = { Text("User name") },
+                label = { Text(stringResource(R.string.hint_username)) },
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(8.dp))
@@ -51,7 +53,7 @@ fun RegisterScreen(
             OutlinedTextField(
                 value = email,
                 onValueChange = { email = it },
-                label = { Text("Email") },
+                label = { Text(stringResource(R.string.hint_email)) },
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(8.dp))
@@ -59,7 +61,7 @@ fun RegisterScreen(
             OutlinedTextField(
                 value = password,
                 onValueChange = { password = it },
-                label = { Text("Password") },
+                label = { Text(stringResource(R.string.hint_password)) },
                 visualTransformation = PasswordVisualTransformation(),
                 modifier = Modifier.fillMaxWidth()
             )
@@ -73,13 +75,13 @@ fun RegisterScreen(
                     modifier = Modifier.fillMaxWidth(),
                     enabled = username.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty()
                 ) {
-                    Text("Register")
+                    Text(stringResource(R.string.action_register))
                 }
             }
 
             if (registerState is Resource.Error) {
                 Text(
-                    text = (registerState as Resource.Error).message,
+                    text = (registerState as Resource.Error).message.asString(),
                     color = MaterialTheme.colorScheme.error,
                     modifier = Modifier.padding(top = 8.dp)
                 )
@@ -87,7 +89,7 @@ fun RegisterScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "Registered already? Log in",
+                text = stringResource(R.string.prompt_have_account),
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.clickable { onBackToLogin() }
             )

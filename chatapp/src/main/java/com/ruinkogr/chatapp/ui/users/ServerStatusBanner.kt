@@ -16,7 +16,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.ruinkogr.chatapp.R
 
 @Composable
 fun ServerStatusBanner() {
@@ -35,7 +37,7 @@ fun ServerStatusBanner() {
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "Connection to server lost. Read-only mode. 🛠️",
+                text = stringResource(R.string.message_server_disconnected),
                 color = Color.White
             )
         }

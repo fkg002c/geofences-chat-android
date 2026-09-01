@@ -55,7 +55,7 @@ fun FullChatScreen(
                 }
 
                 is Resource.Error -> Text(
-                    text = state.message,
+                    text = state.message.asString(),
                     color = Color.Red,
                     modifier = Modifier.align(Alignment.Center)
                 )

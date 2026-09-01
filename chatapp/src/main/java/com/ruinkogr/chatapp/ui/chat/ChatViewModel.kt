@@ -3,11 +3,13 @@ package com.ruinkogr.chatapp.ui.chat
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ruinkogr.chatapp.R
 import com.ruinkogr.chatapp.data.Resource
 import com.ruinkogr.chatapp.data.remote.dto.MessageDto
 import com.ruinkogr.chatapp.data.repository.ChatRepository
 import com.ruinkogr.chatapp.data.storage.EncryptedPrefsTokenStorage
 import com.ruinkogr.chatapp.data.storage.TokenStorage
+import com.ruinkogr.chatapp.util.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.SharingStarted
@@ -35,7 +37,7 @@ class ChatViewModel @Inject constructor(
             repository.getMessagesWithCache(currentUserId, chatWithUserId)
                 .collect { emit(it) }
         } else {
-            emit(Resource.Error("User is not authorized"))
+            emit(Resource.Error(UiText.StringResource(R.string.error_user_not_authorized)))
         }
     }.stateIn(
         scope = viewModelScope,
@@ -49,7 +51,7 @@ class ChatViewModel @Inject constructor(
     }
 
     // errors flow for Toast or SnakeBar
-    private val _errorChannel = Channel<String>()
+    private val _errorChannel = Channel<UiText>()
     val errorSignal = _errorChannel.receiveAsFlow()  // TODO implementation
 
     fun sendMessage(content: String) {

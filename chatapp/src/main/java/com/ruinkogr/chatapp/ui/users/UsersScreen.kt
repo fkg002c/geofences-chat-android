@@ -29,7 +29,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.ruinkogr.chatapp.R
 import com.ruinkogr.chatapp.data.Resource
 import com.ruinkogr.chatapp.ui.auth.AuthViewModel
 
@@ -55,12 +57,12 @@ fun UsersScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Contacts") },
+                title = { Text(stringResource(R.string.title_contacts)) },
                 actions = {
                     IconButton(onClick = { menuExpanded = true }) {
                         Icon(
                             imageVector = Icons.Default.MoreVert,
-                            contentDescription = "Options Menu"
+                            contentDescription = stringResource(R.string.content_desc_options_menu)
                         )
                     }
 
@@ -71,7 +73,7 @@ fun UsersScreen(
                         DropdownMenuItem(
                             text = {
                                 Text(
-                                    text = "Settings"
+                                    text = stringResource(R.string.label_settings)
                                 )
                             },
                             onClick = {
@@ -85,7 +87,7 @@ fun UsersScreen(
                         DropdownMenuItem(
                             text = {
                                 Text(
-                                    text = "Logout",
+                                    text = stringResource(R.string.action_logout),
                                     color = MaterialTheme.colorScheme.error
                                 )
                             },
@@ -125,7 +127,7 @@ fun UsersScreen(
                     }
                 }
 
-                is UsersUiState.Error -> Text(text = state.message, modifier = Modifier.align(Alignment.Center))
+                is UsersUiState.Error -> Text(text = state.message.asString(), modifier = Modifier.align(Alignment.Center))
             }
         }
     }

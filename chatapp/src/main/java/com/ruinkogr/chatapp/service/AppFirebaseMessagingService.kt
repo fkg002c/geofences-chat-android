@@ -121,11 +121,11 @@ class AppFirebaseMessagingService : FirebaseMessagingService() {
         val channelId = "server_status_channel"
         val notificationManager = getSystemService(NotificationManager::class.java)
 
-        val channel = NotificationChannel(channelId, "Server Status", NotificationManager.IMPORTANCE_HIGH)
+        val channel = NotificationChannel(channelId, getString(R.string.channel_server_status_name), NotificationManager.IMPORTANCE_HIGH)
         notificationManager.createNotificationChannel(channel)
 
-        val title = if (isOnline) "Server online 🚀" else "Maintenance in progress 🛠️"
-        val body = if (isOnline) "We're back online!" else "The server is going down for maintenance."
+        val title = getString(if (isOnline) R.string.notif_server_online_title else R.string.notif_server_maintenance_title)
+        val body = getString(if (isOnline) R.string.notif_server_online_body else R.string.notif_server_maintenance_body)
 
         val notification = NotificationCompat.Builder(this, channelId)
             .setContentTitle(title)
@@ -142,11 +142,11 @@ class AppFirebaseMessagingService : FirebaseMessagingService() {
         val channelId = "server_status_channel"
         val notificationManager = getSystemService(NotificationManager::class.java)
 
-        val channel = NotificationChannel(channelId, "Server Status", NotificationManager.IMPORTANCE_HIGH)
+        val channel = NotificationChannel(channelId, getString(R.string.channel_server_status_name), NotificationManager.IMPORTANCE_HIGH)
         notificationManager.createNotificationChannel(channel)
 
         val notification = NotificationCompat.Builder(this, channelId)
-            .setContentTitle("Message from $senderName")
+            .setContentTitle(getString(R.string.notif_message_from_format, senderName))
             .setContentText(content)
             .setUsesChronometer(true)
             .setSmallIcon(android.R.drawable.stat_notify_sync)
@@ -186,11 +186,11 @@ class AppFirebaseMessagingService : FirebaseMessagingService() {
         )
 
         val remoteInput = RemoteInput.Builder("KEY_TEXT_REPLY")
-            .setLabel("Type message...")
+            .setLabel(getString(R.string.hint_type_message))
             .build()
 
         val replyAction = NotificationCompat.Action.Builder(
-            android.R.drawable.ic_menu_send, "Reply", replyPendingIntent
+            android.R.drawable.ic_menu_send, getString(R.string.action_reply), replyPendingIntent
         ).addRemoteInput(remoteInput).build()
 
         val notification = NotificationCompat.Builder(this, channelId)
@@ -200,7 +200,7 @@ class AppFirebaseMessagingService : FirebaseMessagingService() {
             .setContentIntent(contentPendingIntent)
             .setAutoCancel(true)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .addAction(android.R.drawable.ic_menu_agenda, "Mark as Read", readPendingIntent)
+            .addAction(android.R.drawable.ic_menu_agenda, getString(R.string.action_mark_as_read), readPendingIntent)
             .addAction(replyAction)
             .build()
 

@@ -25,8 +25,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import com.ruinkogr.chatapp.R
 import com.ruinkogr.chatapp.data.Resource
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -48,7 +50,7 @@ fun LoginScreen(
     }
 
     Scaffold(
-        topBar = { TopAppBar(title = { Text("Login") }) }
+        topBar = { TopAppBar(title = { Text(stringResource(R.string.title_login)) }) }
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -57,13 +59,13 @@ fun LoginScreen(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text("ChatApp enter", style = MaterialTheme.typography.headlineMedium)
+            Text(stringResource(R.string.headline_login), style = MaterialTheme.typography.headlineMedium)
             Spacer(modifier = Modifier.height(16.dp))
 
             OutlinedTextField(
                 value = username,
                 onValueChange = { username = it },
-                label = { Text("User name") },
+                label = { Text(stringResource(R.string.hint_username)) },
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(8.dp))
@@ -71,7 +73,7 @@ fun LoginScreen(
             OutlinedTextField(
                 value = password,
                 onValueChange = { password = it },
-                label = { Text("Password") },
+                label = { Text(stringResource(R.string.hint_password)) },
                 visualTransformation = PasswordVisualTransformation(),
                 modifier = Modifier.fillMaxWidth()
             )
@@ -85,20 +87,20 @@ fun LoginScreen(
                     modifier = Modifier.fillMaxWidth(),
                     enabled = username.isNotEmpty() && password.isNotEmpty()
                 ) {
-                    Text("Enter")
+                    Text(stringResource(R.string.action_enter))
                 }
             }
 
             if (loginState is Resource.Error) {
                 Text(
-                    text = (loginState as Resource.Error).message,
+                    text = (loginState as Resource.Error).message.asString(),
                     color = MaterialTheme.colorScheme.error,
                     modifier = Modifier.padding(top = 8.dp)
                 )
             }
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "Have no account? Register",
+                text = stringResource(R.string.prompt_no_account),
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.clickable {
                     onNavigateToRegister()

@@ -14,4 +14,60 @@
     <string name="label_monitor_server_state">Отслеживать состояние сервера</string>
     <string name="label_on">Включено</string>
     <string name="label_off">Выключено</string>
+
+    <!-- Login screen -->
+    <string name="title_login">Вход</string>
+    <string name="headline_login">Вход в ChatApp</string>
+    <string name="hint_username">Имя пользователя</string>
+    <string name="hint_password">Пароль</string>
+    <string name="action_enter">Войти</string>
+    <string name="prompt_no_account">Нет аккаунта? Зарегистрироваться</string>
+
+    <!-- Register screen -->
+    <string name="action_register">Регистрация</string>
+    <string name="headline_register">Регистрация в ChatApp</string>
+    <string name="hint_email">Эл. почта</string>
+    <string name="prompt_have_account">Уже есть аккаунт? Войти</string>
+
+    <!-- Chat screen -->
+    <string name="hint_message">Сообщение</string>
+    <string name="content_desc_send">Отправить</string>
+
+    <!-- Users list screen -->
+    <string name="title_contacts">Контакты</string>
+    <string name="content_desc_options_menu">Меню опций</string>
+    <string name="action_logout">Выйти</string>
+
+    <!-- Server status banner -->
+    <string name="message_server_disconnected">Соединение с сервером потеряно. Режим чтения. &#128736;&#65039;</string>
+
+    <!-- Auth / repository errors -->
+    <string name="error_incorrect_credentials">Неверное имя пользователя или пароль</string>
+    <string name="error_update_fcm_token_format">Ошибка updateFcmToken: %1$s</string>
+    <string name="error_login_format">Ошибка входа: %1$s</string>
+    <string name="error_firebase_uid">Ошибка создания UID Firebase</string>
+    <string name="error_register_generic">Ошибка регистрации</string>
+    <string name="error_registration_format">Ошибка регистрации: %1$s</string>
+    <string name="error_user_not_authorized">Пользователь не авторизован</string>
+    <string name="error_empty_response">Пустой ответ от сервера</string>
+    <string name="error_server_response_format">Ошибка %1$d: %2$s</string>
+    <string name="error_server_unknown_format">Ошибка %1$d: неизвестная ошибка сервера</string>
+    <string name="error_no_internet">Нет подключения к интернету. Проверьте</string>
+    <string name="error_processing_data">Произошла ошибка при обработке данных.</string>
+    <string name="error_cache_or_network">Ошибка кэша или сети</string>
+    <string name="error_get_messages_critical">Критическая ошибка получения сообщений</string>
+
+    <!-- Notifications -->
+    <string name="channel_server_status_name">Статус сервера</string>
+    <string name="channel_server_status_description">Уведомления о технических работах и перезапусках сервера</string>
+    <string name="channel_chat_messages_name">Сообщения чата</string>
+    <string name="channel_chat_messages_description">Уведомления о новых сообщениях</string>
+    <string name="notif_server_online_title">Сервер онлайн &#128640;</string>
+    <string name="notif_server_maintenance_title">Технические работы &#128736;&#65039;</string>
+    <string name="notif_server_online_body">Мы снова в сети!</string>
+    <string name="notif_server_maintenance_body">Сервер уходит на обслуживание.</string>
+    <string name="notif_message_from_format">Сообщение от %1$s</string>
+    <string name="hint_type_message">Введите сообщение…</string>
+    <string name="action_reply">Ответить</string>
+    <string name="action_mark_as_read">Отметить как прочитанное</string>
 </resources>

@@ -1,6 +1,8 @@
 package com.ruinkogr.chatapp.data.repository
 
+import com.ruinkogr.chatapp.R
 import com.ruinkogr.chatapp.data.Resource
+import com.ruinkogr.chatapp.util.UiText
 import retrofit2.Response
 import java.io.IOException
 
@@ -14,16 +16,21 @@ abstract class BaseRepository {
                 if (body != null) {
                     Resource.Success(body)
                 } else {
-                    Resource.Error("Empty response from Server")
+                    Resource.Error(UiText.StringResource(R.string.error_empty_response))
                 }
             } else {
-                val errorMessage = response.errorBody()?.string() ?: "Unknown server error"
-                Resource.Error("Error ${response.code()}: $errorMessage")
+                val errorBody = response.errorBody()?.string()
+                val message = if (errorBody != null) {
+                    UiText.StringResource(R.string.error_server_response_format, listOf(response.code(), errorBody))
+                } else {
+                    UiText.StringResource(R.string.error_server_unknown_format, listOf(response.code()))
+                }
+                Resource.Error(message)
             }
         } catch (e: IOException) {
-            Resource.Error("No internet connection. Check", e)
+            Resource.Error(UiText.StringResource(R.string.error_no_internet), e)
         } catch (e: Exception) {
-            Resource.Error("An error occurred while processing data.", e)
+            Resource.Error(UiText.StringResource(R.string.error_processing_data), e)
         }
     }
 }
