@@ -1,5 +1,6 @@
 package com.ruinkogr.chatapp.data.repository
 
+import com.ruinkogr.chatapp.R
 import com.ruinkogr.chatapp.data.Resource
 import com.ruinkogr.chatapp.data.local.MessageDao
 import com.ruinkogr.chatapp.data.local.MessageEntity
@@ -11,6 +12,7 @@ import com.ruinkogr.chatapp.data.remote.dto.MessageDto
 import com.ruinkogr.chatapp.data.remote.dto.SendMessageRequest
 import com.ruinkogr.chatapp.data.remote.dto.UserDto
 import com.ruinkogr.chatapp.data.storage.TokenStorage
+import com.ruinkogr.chatapp.util.UiText
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -50,7 +52,7 @@ class ChatRepository @Inject constructor(
             .collect { emit(it) }
 
     }.catch { e ->
-        emit(Resource.Error("Cache or Network error", e))
+        emit(Resource.Error(UiText.StringResource(R.string.error_cache_or_network), e))
     }.flowOn(Dispatchers.IO)
 
     fun getMessagesWithCacheAlt(currentUserId: Int, chatWithUserId: Int): Flow<Resource<List<MessageDto>>> = flow {
@@ -75,7 +77,7 @@ class ChatRepository @Inject constructor(
             .collect { emit(it) }
 
     }.catch { e ->
-        emit(Resource.Error("Get messages critical error", e))
+        emit(Resource.Error(UiText.StringResource(R.string.error_get_messages_critical), e))
     }.flowOn(Dispatchers.IO)
 
     suspend fun sendMessage(content: String, receiverId: Int): Resource<MessageDto> {

@@ -9,6 +9,7 @@ import android.media.AudioAttributes
 import androidx.core.net.toUri
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.lifecycle.lifecycleScope
+import com.ruinkogr.chatapp.R
 import com.ruinkogr.chatapp.ui.settings.SettingsManager
 import com.ruinkogr.chatapp.websocket.AppLifecycleObserver
 import com.ruinkogr.chatapp.websocket.WebSocketManager
@@ -50,20 +51,20 @@ class ChatApplication : Application() {
 
         val chatChannel = NotificationChannel(
             "chat_messages_channel",
-            "Chat messages",
+            context.getString(R.string.channel_chat_messages_name),
             NotificationManager.IMPORTANCE_HIGH
         ).apply {
-            description = "Notifications about new messages"
+            description = context.getString(R.string.channel_chat_messages_description)
             setSound(chatSoundUri, audioAttributes)
             enableVibration(true)
         }
 
         val serverChannel = NotificationChannel(
             "server_status_channel",
-            "Server status",
+            context.getString(R.string.channel_server_status_name),
             NotificationManager.IMPORTANCE_HIGH
         ).apply {
-            description = "Notifications about technical work and server restarts"
+            description = context.getString(R.string.channel_server_status_description)
             setSound(serverSoundUri, audioAttributes)
         }
 

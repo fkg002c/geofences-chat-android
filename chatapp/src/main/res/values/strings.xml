@@ -13,4 +13,60 @@
     <string name="label_monitor_server_state">Monitor server status</string>
     <string name="label_on">On</string>
     <string name="label_off">Off</string>
+
+    <!-- Login screen -->
+    <string name="title_login">Login</string>
+    <string name="headline_login">ChatApp enter</string>
+    <string name="hint_username">User name</string>
+    <string name="hint_password">Password</string>
+    <string name="action_enter">Enter</string>
+    <string name="prompt_no_account">Have no account? Register</string>
+
+    <!-- Register screen -->
+    <string name="action_register">Register</string>
+    <string name="headline_register">ChatApp registration</string>
+    <string name="hint_email">Email</string>
+    <string name="prompt_have_account">Registered already? Log in</string>
+
+    <!-- Chat screen -->
+    <string name="hint_message">Message</string>
+    <string name="content_desc_send">Send</string>
+
+    <!-- Users list screen -->
+    <string name="title_contacts">Contacts</string>
+    <string name="content_desc_options_menu">Options Menu</string>
+    <string name="action_logout">Logout</string>
+
+    <!-- Server status banner -->
+    <string name="message_server_disconnected">Connection to server lost. Read-only mode. &#128736;&#65039;</string>
+
+    <!-- Auth / repository errors -->
+    <string name="error_incorrect_credentials">Incorrect username or password</string>
+    <string name="error_update_fcm_token_format">updateFcmToken error: %1$s</string>
+    <string name="error_login_format">login error: %1$s</string>
+    <string name="error_firebase_uid">Firebase create UID error</string>
+    <string name="error_register_generic">Register error</string>
+    <string name="error_registration_format">Registration error: %1$s</string>
+    <string name="error_user_not_authorized">User is not authorized</string>
+    <string name="error_empty_response">Empty response from Server</string>
+    <string name="error_server_response_format">Error %1$d: %2$s</string>
+    <string name="error_server_unknown_format">Error %1$d: Unknown server error</string>
+    <string name="error_no_internet">No internet connection. Check</string>
+    <string name="error_processing_data">An error occurred while processing data.</string>
+    <string name="error_cache_or_network">Cache or Network error</string>
+    <string name="error_get_messages_critical">Get messages critical error</string>
+
+    <!-- Notifications -->
+    <string name="channel_server_status_name">Server status</string>
+    <string name="channel_server_status_description">Notifications about technical work and server restarts</string>
+    <string name="channel_chat_messages_name">Chat messages</string>
+    <string name="channel_chat_messages_description">Notifications about new messages</string>
+    <string name="notif_server_online_title">Server online &#128640;</string>
+    <string name="notif_server_maintenance_title">Maintenance in progress &#128736;&#65039;</string>
+    <string name="notif_server_online_body">We\'re back online!</string>
+    <string name="notif_server_maintenance_body">The server is going down for maintenance.</string>
+    <string name="notif_message_from_format">Message from %1$s</string>
+    <string name="hint_type_message">Type message…</string>
+    <string name="action_reply">Reply</string>
+    <string name="action_mark_as_read">Mark as Read</string>
 </resources>
