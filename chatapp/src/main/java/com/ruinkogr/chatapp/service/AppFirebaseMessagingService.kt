@@ -45,10 +45,10 @@ class AppFirebaseMessagingService : FirebaseMessagingService() {
             val status = remoteMessage.data["status"]
             val isOnline = status == "start"
 
-            // Обновляем состояние для Compose (актуально, если приложение открыто)
+            // Update state for Compose (relevant if the app is open)
             ServerStatusMonitor.setStatus(isOnline)
 
-            // Если приложение в бэкграунде, дополнительно показываем системную нотификацию
+            // If the app is in the background, also show a system notification
             if (!isAppInForeground()) {
                 showServerNotification(isOnline)
             }
@@ -121,16 +121,16 @@ class AppFirebaseMessagingService : FirebaseMessagingService() {
         val channelId = "server_status_channel"
         val notificationManager = getSystemService(NotificationManager::class.java)
 
-        val channel = NotificationChannel(channelId, "Статус Сервера", NotificationManager.IMPORTANCE_HIGH)
+        val channel = NotificationChannel(channelId, "Server Status", NotificationManager.IMPORTANCE_HIGH)
         notificationManager.createNotificationChannel(channel)
 
-        val title = if (isOnline) "Сервер онлайн 🚀" else "Технические работы 🛠️"
-        val body = if (isOnline) "Мы снова в сети!" else "Сервер уходит на обслуживание."
+        val title = if (isOnline) "Server online 🚀" else "Maintenance in progress 🛠️"
+        val body = if (isOnline) "We're back online!" else "The server is going down for maintenance."
 
         val notification = NotificationCompat.Builder(this, channelId)
             .setContentTitle(title)
             .setContentText(body)
-            .setSmallIcon(android.R.drawable.stat_notify_sync) // замените на свою иконку
+            .setSmallIcon(android.R.drawable.stat_notify_sync) // replace with your own icon
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setAutoCancel(true)
             .build()
@@ -142,7 +142,7 @@ class AppFirebaseMessagingService : FirebaseMessagingService() {
         val channelId = "server_status_channel"
         val notificationManager = getSystemService(NotificationManager::class.java)
 
-        val channel = NotificationChannel(channelId, "Статус Сервера", NotificationManager.IMPORTANCE_HIGH)
+        val channel = NotificationChannel(channelId, "Server Status", NotificationManager.IMPORTANCE_HIGH)
         notificationManager.createNotificationChannel(channel)
 
         val notification = NotificationCompat.Builder(this, channelId)

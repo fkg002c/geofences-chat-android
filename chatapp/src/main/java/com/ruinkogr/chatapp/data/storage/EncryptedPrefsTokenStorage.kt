@@ -52,6 +52,6 @@ class EncryptedPrefsTokenStorage(context: Context) : TokenStorage {
     companion object {
         private const val KEY_ACCESS_TOKEN = "access_token"
         private const val KEY_REFRESH_TOKEN = "refresh_token"
-        private const val KEY_USER_ID = "current_user_id" // Новый ключ
+        private const val KEY_USER_ID = "current_user_id" // New key
     }
 }
