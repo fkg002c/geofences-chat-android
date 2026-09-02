@@ -21,7 +21,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,18 +40,10 @@ fun UsersScreen(
     usersViewModel: UsersViewModel,
     authViewModel: AuthViewModel,
     onUserClick: (Int) -> Unit,
-    onSettingsClick: () -> Unit,
-    onLogoutSuccess: () -> Unit
+    onSettingsClick: () -> Unit
 ) {
     val usersState by usersViewModel.usersState.collectAsState()
     var menuExpanded by remember { mutableStateOf(false) }
-    // Logout listener
-    val loginState by authViewModel.loginState.collectAsState()
-    LaunchedEffect(Unit) {
-        authViewModel.logoutEvent.collect {
-            onLogoutSuccess()
-        }
-    }
 
     Scaffold(
         topBar = {

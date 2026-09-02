@@ -1,5 +1,6 @@
 package com.ruinkogr.chatapp.ui.auth
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
@@ -11,6 +12,8 @@ import com.ruinkogr.chatapp.data.remote.FcmService
 import com.ruinkogr.chatapp.data.remote.dto.FcmTokenRequest
 import com.ruinkogr.chatapp.data.remote.dto.LoginRequest
 import com.ruinkogr.chatapp.data.remote.dto.RegisterRequest
+import com.ruinkogr.chatapp.data.remote.retrofit.AuthEvent
+import com.ruinkogr.chatapp.data.remote.retrofit.SessionManager
 import com.ruinkogr.chatapp.data.storage.TokenStorage
 import com.ruinkogr.chatapp.util.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,11 +29,25 @@ import javax.inject.Inject
 class AuthViewModel @Inject constructor(
     private val authService: AuthService,
     private val fcmService: FcmService,
-    private val tokenStorage: TokenStorage
+    private val tokenStorage: TokenStorage,
+    private val sessionManager: SessionManager
 ) : ViewModel() {
 
     private val _loginState = MutableStateFlow<Resource<Unit>?>(null)
     val loginState: StateFlow<Resource<Unit>?> = _loginState
+
+    init {
+        // A request anywhere in the app can detect an invalid session (expired refresh token, etc.)
+        // and report it here so the UI always falls back to the login screen, not just on the
+        // explicit Logout button.
+        viewModelScope.launch {
+            sessionManager.authEvents.collect { event ->
+                if (event is AuthEvent.Logout) {
+                    performLocalLogout()
+                }
+            }
+        }
+    }
 
     fun login(username: String, password: String) {
         viewModelScope.launch {
@@ -132,18 +149,40 @@ class AuthViewModel @Inject constructor(
 
     fun logout() {
         viewModelScope.launch {
+            // Notifying the server is best-effort: a flaky connection or an expired token here
+            // must never prevent the local sign-out below, or the user gets stuck on-screen.
             try {
                 fcmService.logout()
-                FirebaseAuth.getInstance().signOut()
-                tokenStorage.clearSession()
-                _logoutEvent.emit(Unit)
-            } catch (_: Exception) {
-                // TODO implementation
+            } catch (e: Exception) {
+                Log.w(TAG, "Remote logout call failed, logging out locally anyway: ${e.message}")
             }
+            performLocalLogout()
         }
+    }
+
+    private suspend fun performLocalLogout() {
+        try {
+            FirebaseAuth.getInstance().signOut()
+        } catch (e: Exception) {
+            Log.w(TAG, "FirebaseAuth signOut failed: ${e.message}")
+        }
+        tokenStorage.clearSession()
+        // _loginState is Activity-scoped and otherwise never clears itself: leaving a stale
+        // Resource.Success here would make LoginScreen's success LaunchedEffect fire again the
+        // instant it recomposes, immediately bouncing straight back past the login screen.
+        _loginState.value = null
+        _logoutEvent.emit(Unit)
+    }
+
+    fun resetLoginState() {
+        _loginState.value = null
     }
 
     fun resetRegisterState() {
         _registerState.value = null
+    }
+
+    private companion object {
+        private const val TAG = "AuthViewModel"
     }
 }
