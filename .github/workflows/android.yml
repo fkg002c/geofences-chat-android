@@ -38,6 +38,17 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-gradle-
 
+    # НОВЫЙ ШАГ: Воссоздаем секретную папку и файл google-services.json
+    - name: Decode Google Services JSON
+      env:
+        GOOGLE_SERVICES_SECRET: ${{ secrets.GOOGLE_SERVICES_BASE64 }}
+      run: |
+        # 1. Создаем папку _secrets_ на один уровень выше корня проекта
+        mkdir -p ../_secrets_
+
+        # 2. Декодируем строку из секретов GitHub наружу в файл
+        echo "$GOOGLE_SERVICES_SECRET" | base64 --decode > ../_secrets_/google-services.json
+
     - name: Run Unit Tests
       run: ./gradlew test
 
