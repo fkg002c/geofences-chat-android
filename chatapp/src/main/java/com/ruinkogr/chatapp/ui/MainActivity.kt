@@ -66,6 +66,22 @@ class MainActivity : ComponentActivity() {
                     }
                 }
 
+                // Listen for logout regardless of which screen is currently shown (explicit
+                // Logout tap, or an automatic one from an interceptor-detected invalid session)
+                LaunchedEffect(Unit) {
+                    authViewModel.logoutEvent.collect {
+                        // A burst of concurrent requests can each independently detect the same
+                        // dead session and each report a logout; avoid stacking duplicate entries.
+                        if (navController.currentDestination?.route == "login_screen") return@collect
+
+                        Log.d("Navigation", "Logout event received, redirecting to Login screen")
+                        navController.navigate("login_screen") {
+                            popUpTo(navController.graph.startDestinationId) { inclusive = true }
+                            launchSingleTop = true
+                        }
+                    }
+                }
+
                 // Listen for new push taps (warm start via onNewIntent)
                 openChatUserIdByPush?.let { chatId ->
                     LaunchedEffect(chatId) {
@@ -123,21 +139,12 @@ class MainActivity : ComponentActivity() {
                         val onSettingsClickRemembered = remember(navController) {
                             { navController.navigate("settings_screen") }
                         }
-                        val onLogoutSuccessRemembered = remember(navController) {
-                            {
-                                Log.d("Navigation", "Redirecting to Login screen...onLogoutSuccessRemembered")
-                                navController.navigate("login_screen") {
-                                    popUpTo("users_list") { inclusive = true }
-                                }
-                            }
-                        }
 
                         UsersScreen(
                             usersViewModel = usersViewModel,
                             authViewModel = authViewModel,
                             onUserClick = onUserClickRemembered,
-                            onSettingsClick = onSettingsClickRemembered,
-                            onLogoutSuccess = onLogoutSuccessRemembered
+                            onSettingsClick = onSettingsClickRemembered
                         )
                     }
 
