@@ -18,6 +18,9 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+      with:
+        # Скачиваем всю историю коммитов, чтобы GitHub смог сравнить версии и составить список изменений
+        fetch-depth: 0
 
     - name: Set up JDK 17
       uses: actions/setup-java@v4
@@ -74,7 +77,7 @@ jobs:
         fi
         echo "Найден файл: $FOUND_APK"
         # Копируем его в корень рабочей директории с новым именем
-        cp "$FOUND_APK" ./chatapp-v$APP_VERSION.apk
+        cp "$FOUND_APK" ./chatapp-debug-v$APP_VERSION.apk
 
       # ИСПРАВЛЕНО: Загружаем файл из корня рабочей директории
     - name: Create GitHub Release
@@ -82,13 +85,16 @@ jobs:
       with:
         tag_name: ${{ github.ref_name }}
         name: Release ${{ github.ref_name }}
-        # ИСПРАВЛЕНО: используем встроенный контекст github.ref_name для отображения тега (например, v0.7)
+        # Включаем автоматическую генерацию Changelog от GitHub
+        generate_release_notes: true
+        # Дополнительный кастомный текст, который встанет НАД списком коммитов
         body: |
-          Автоматический релиз для версии ${{ github.ref_name }}, собранный по тегу ${{ github.ref_name }}.
-          Успешно пройдены сборка модуля chatapp и тестирование.
+          Автоматический релиз для версии ${{ github.ref_name }}, собранный по одноименному тегу.
+          Успешно пройдены автоматическая сборка модуля chatapp и тестирование.
+          Файл сборки прикреплен ниже.
         draft: false
         prerelease: false
         # Путь теперь ведет на файл, скопированный в корень
-        files: ./chatapp-v${{ env.APP_VERSION }}.apk
+        files: ./chatapp-debug-v${{ env.APP_VERSION }}.apk
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
