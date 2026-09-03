@@ -82,11 +82,13 @@ jobs:
       with:
         tag_name: ${{ github.ref_name }}
         name: Release ${{ github.ref_name }}
-        body: "Автоматический релиз для версии $APP_VERSION, собранный по тегу ${{ github.ref_name }}. Успешно пройдены сборка модуля chatapp и тестирование."
+        # ИСПРАВЛЕНО: используем встроенный контекст github.ref_name для отображения тега (например, v0.7)
+        body: |
+          Автоматический релиз для версии ${{ github.ref_name }}, собранный по тегу ${{ github.ref_name }}.
+          Успешно пройдены сборка модуля chatapp и тестирование.
         draft: false
         prerelease: false
         # Путь теперь ведет на файл, скопированный в корень
         files: ./chatapp-v${{ env.APP_VERSION }}.apk
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        APP_VERSION: ${{ env.APP_VERSION }}
